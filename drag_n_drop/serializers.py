@@ -17,26 +17,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TodoSerializer(serializers.ModelSerializer):
-    # id = serializers.IntegerField(read_only=True)
-    # title = serializers.CharField(required=True, min_length=5, max_length=150)
-    # description = serializers.CharField()
-    # created_at = serializers.DateTimeField()
-    # completed = serializers.BooleanField(default=False)
-    # user = serializers.IntegerField(required=True)
+    user = serializers.ReadOnlyField(source='user.username')
+
     class Meta:
         model = Todo
-        fields = ['id', 'title', 'description', 'created_at', 'completed']
-
-    # def create(self, validated_data):
-
-    #     return Todo.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        print('instance', instance.description)
-        instance.title = validated_data.get('title', instance.title)
-        instance.description = validated_data.get(
-            'description', instance.description)
-        instance.completed = validated_data.get(
-            'completed', instance.completed)
-        instance.save()
-        return instance
+        fields = ['id', 'title', 'description',
+                  'created_at', 'completed', 'user']
