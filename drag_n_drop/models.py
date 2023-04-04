@@ -8,7 +8,7 @@ class Todo(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(
         'auth.User', related_name="todos", on_delete=models.CASCADE)
 
