@@ -12,4 +12,4 @@ class Todo(models.Model):
         'auth.User', related_name="todos", on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['-order', 'created_at']
+        ordering = ['-order', '-created_at']
