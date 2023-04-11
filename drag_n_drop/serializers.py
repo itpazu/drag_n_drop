@@ -4,22 +4,16 @@ from .models import Todo
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
-# run is valid on incoming data to validate the input and enable buttons
-# dates not working properly
-# join tables on foreign key before serializing
-
 
 class UserSerializer(serializers.ModelSerializer):
-    todos = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Todo.objects.all())
     password = serializers.CharField(
-        write_only=True, required=True,  validators=[validate_password])
+        write_only=True, required=True, validators=[validate_password])
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())])
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'todos', 'password']
+        fields = ['id', 'username', 'email', 'password']
 
     def create(self, validated_data):
         user = User.objects.create_user(validated_data['username'], validated_data['email'],
@@ -27,10 +21,34 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+class ListTodoSerializer(serializers.ListSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+
+    def update(self, instances, validated_data):
+
+        modify_items_dic = [
+            (item.get("id"), item) for item in validated_data]
+        db_instances_dic = {instance.id: instance for
+                            instance in instances}
+
+        update_dic = []
+        for todo_id, fields in modify_items_dic:
+            dbItem = db_instances_dic.get(todo_id, None)
+            if dbItem is None:
+                update_dic.append(self.child.create(fields))
+            elif fields.get("description", '') == "delete":
+                dbItem.delete()
+            else:
+                update_dic.append(self.child.update(dbItem, fields))
+        return update_dic
+
+
 class TodoSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
+    id = serializers.IntegerField(required=False)
 
     class Meta:
         model = Todo
         fields = ['id', 'title', 'description',
-                  'created_at', 'completed', 'user', 'updated_at', 'order']
+                  'completed', 'order', 'user', 'created_at', 'updated_at']
+        list_serializer_class = ListTodoSerializer
