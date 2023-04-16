@@ -22,7 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ListTodoSerializer(serializers.ListSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
 
     def update(self, instances, validated_data):
 
@@ -45,7 +44,7 @@ class ListTodoSerializer(serializers.ListSerializer):
 
 class TodoSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
-    id = serializers.IntegerField(required=False)
+    id = serializers.ReadOnlyField(required=False)
 
     class Meta:
         model = Todo

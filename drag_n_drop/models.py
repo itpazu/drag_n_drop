@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Todo(models.Model):
-    title = models.CharField(max_length=150)
+    title = models.CharField(max_length=150, blank=False)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
@@ -12,4 +12,4 @@ class Todo(models.Model):
         'auth.User', related_name="todos", on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['-order', '-created_at']
+        ordering = ['-created_at']
