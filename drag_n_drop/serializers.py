@@ -32,6 +32,7 @@ class ListTodoSerializer(serializers.ListSerializer):
 
         update_dic = []
         for todo_id, fields in modify_items_dic:
+            print(todo_id, fields)
             dbItem = db_instances_dic.get(todo_id, None)
             if dbItem is None:
                 update_dic.append(self.child.create(fields))
@@ -44,7 +45,7 @@ class ListTodoSerializer(serializers.ListSerializer):
 
 class TodoSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
-    id = serializers.ReadOnlyField(required=False)
+    id = serializers.IntegerField(required=False)
 
     class Meta:
         model = Todo
