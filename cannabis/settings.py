@@ -19,7 +19,6 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-print(os.environ.get('SECRET_KEY'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -38,6 +37,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
+    'knox',
+    'rest_framework.authtoken',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -62,6 +63,7 @@ ROOT_URLCONF = 'cannabis.urls'
 CORS_ALLOWED_ORIGINS = [
 
     "http://localhost:3000",
+    "http://localhost:3001",
     "http://127.0.0.1:3000"
 ]
 CORS_ORIGIN_ALLOW_ALL = False
@@ -99,6 +101,9 @@ DATABASES = {
     }
 }
 
+
+if os.environ.get('IS_DEV'):
+    from .dev_settings import *
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -141,3 +146,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',)
+}
+
+REST_KNOX = {
+    'USER_SERIALIZER': 'knox.serializers.UserSerializer',
+    'AUTH_HEADER_PREFIX': 'Bearer',
+
+}
