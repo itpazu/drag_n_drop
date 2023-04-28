@@ -3,12 +3,39 @@ from .models import Todo
 from .serializers import TodoSerializer, UserSerializer, ListTodoSerializer
 from rest_framework import generics, permissions
 from .permissions import IsOwner
+from knox.views import LoginView as KnoxLoginView
+from knox.models import AuthToken
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.response import Response
 
 
-class UserCreate(generics.CreateAPIView):
-    queryset = User.objects.all()
+class LoginView(KnoxLoginView):
+    authentication_classes = [BasicAuthentication]
+
+
+class AuthenticatedUser(generics.RetrieveAPIView):
     serializer_class = UserSerializer
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def get_object(self):
+        print(self.request.user)
+        return self.request.user
+
+
+class UserCreate(generics.CreateAPIView):
+    serializer_class = UserSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        token = AuthToken.objects.create(user)
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "token": token[1]
+        })
 
 
 class UserTodos(generics.ListCreateAPIView):
