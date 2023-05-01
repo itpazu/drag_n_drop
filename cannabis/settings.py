@@ -101,8 +101,7 @@ DATABASES = {
     }
 }
 
-
-if os.environ.get('IS_DEV'):
+if os.environ.get('IS_DEV') == "True":
     from .dev_settings import *
 
 # Password validation
