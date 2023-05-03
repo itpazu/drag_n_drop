@@ -1,7 +1,7 @@
 {
   "builds": [
     {
-      "src": "cannabis/wsgi.py",
+      "src": "todos_server/wsgi.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb", "runtime": "python3.8.1" }
     }
@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "cannabis/wsgi.py"
+      "dest": "todos_server/wsgi.py"
     }
   ]
 }

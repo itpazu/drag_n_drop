@@ -7,7 +7,7 @@ services:
       container_name: todos-db
       environment:
         - POSTGRES_USER=postgres
-        - POSTGRES_PASS=secret
+        - POSTGRES_PASSWORD=secret
         - POSTGRES_PORT=5432
       ports:
         - "5432:5432"
